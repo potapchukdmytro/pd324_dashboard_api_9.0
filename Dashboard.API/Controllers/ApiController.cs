@@ -24,5 +24,11 @@ namespace Dashboard.API.Controllers
 
             return BadRequest(ServiceResponse.GetBadRequestResponse("Не вдалося отримати валюту"));
         }
+
+        [HttpGet("run")]
+        public IActionResult Run()
+        {
+            return Ok("is running");
+        }
     }
 }

@@ -139,7 +139,7 @@ builder.Services.AddEndpointsApiExplorer();
 //    });
 //});
 
-builder.WebHost.UseUrls("http://*:8080");
+//builder.WebHost.UseUrls("http://*:8080");
 
 var app = builder.Build();
 
@@ -154,6 +154,8 @@ var app = builder.Build();
 //app.UseSwaggerUI();
 
 app.UseCors(MyAllowSpecificOrigins);
+
+app.MapSwagger().RequireAuthorization();
 
 app.UseMiddleware<MiddlewareExceptionHandling>();
 app.UseMiddleware<MiddlewareJwtTokenExceptionHandling>();
