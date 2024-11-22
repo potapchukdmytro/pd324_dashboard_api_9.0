@@ -20,6 +20,12 @@ namespace Dashboard.API.Controllers
             _testService = testService;
         }
 
+        [HttpPut]
+        public async Task<IActionResult> UpdateAsync()
+        {
+            return Ok();
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetAsync([FromQuery]string? userId)
         {
