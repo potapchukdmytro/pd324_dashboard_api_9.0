@@ -21,7 +21,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -141,6 +140,8 @@ builder.Services.AddEndpointsApiExplorer();
 
 //builder.WebHost.UseUrls("http://*:8080");
 
+builder.Services.AddOpenApi();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -155,7 +156,9 @@ var app = builder.Build();
 
 app.UseCors(MyAllowSpecificOrigins);
 
-app.MapSwagger().RequireAuthorization();
+//app.MapSwagger().RequireAuthorization();
+
+app.MapOpenApi();
 
 app.UseMiddleware<MiddlewareExceptionHandling>();
 app.UseMiddleware<MiddlewareJwtTokenExceptionHandling>();
