@@ -9,7 +9,7 @@ using System.Net;
 namespace Dashboard.API.Controllers
 {
     [ApiController]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/tests")]
     public class TestController : BaseController
     {
