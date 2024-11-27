@@ -1,10 +1,6 @@
-﻿using Dashboard.BLL.Services;
-using Dashboard.BLL.Services.TestService;
+﻿using Dashboard.BLL.Services.TestService;
 using Dashboard.DAL.ViewModels.Tests;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
 
 namespace Dashboard.API.Controllers
 {
@@ -26,6 +22,13 @@ namespace Dashboard.API.Controllers
             return Ok();
         }
 
+        [HttpGet("list")]
+        public async Task<IActionResult> GetListAsync(string page, string pageSize)
+        {
+            var response = await _testService.GetListAsync(page, pageSize);
+            return await GetResultAsync(response);
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetAsync([FromQuery]string? userId)
         {
@@ -43,24 +46,9 @@ namespace Dashboard.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateAsync([FromBody] TestVM model)
+        public async Task<IActionResult> CreateAsync([FromBody] CreateTestVM model)
         {
-            if(User == null)
-            {
-                return await GetResultAsync(ServiceResponse.GetServiceResponse("Ви не авторизовані", false, null, HttpStatusCode.Unauthorized));
-            }
-
-            var userId = User.Claims.SingleOrDefault(c => c.Type == "id").Value;
-
-            if(userId  == null)
-            {
-                if (User == null)
-                {
-                    return await GetResultAsync(ServiceResponse.GetServiceResponse("Error", false, null, HttpStatusCode.Forbidden));
-                }
-            }
-
-            var response = await _testService.CreateAsync(model, userId);
+            var response = await _testService.CreateAsync(model);
             return await GetResultAsync(response);
         }
     }

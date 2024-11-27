@@ -17,12 +17,12 @@ namespace Dashboard.BLL.Services.TestService
             _testRepository = testRepository;
         }
 
-        public async Task<ServiceResponse> CreateAsync(TestVM model, string userId)
+        public async Task<ServiceResponse> CreateAsync(CreateTestVM model)
         {
             var test = _mapper.Map<Test>(model);
-            test.UserId = Guid.Parse(userId);
+            test.UserId = Guid.Parse(model.UserId);
 
-            foreach (var q in model.Questions)
+            foreach (var q in model.Test.Questions)
             {
                 var question = _mapper.Map<Question>(q);
                 question.TestId = test.Id;
@@ -62,6 +62,46 @@ namespace Dashboard.BLL.Services.TestService
         public Task<ServiceResponse> GetByUserAsync(string userId)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<ServiceResponse> GetListAsync(string page, string pageSize)
+        {
+            var tests = _testRepository.GetAll();
+
+            int pageInt = int.Parse(page);
+            int size = int.Parse(pageSize);
+
+            if(size < 1)
+            {
+                return ServiceResponse.GetBadRequestResponse("Incorrect page size");
+            };
+
+            decimal totalSize = tests.Count();
+
+            int pageCount = (int)Math.Ceiling(totalSize / size);
+
+            if(pageInt < 1 || pageInt > pageCount)
+            {
+                return ServiceResponse.GetBadRequestResponse("Incorrect page number");
+            }
+            
+            var data = await tests
+                .Skip((pageInt - 1) * size)
+                .Take(size)
+                .Include(t => t.Questions)
+                .ThenInclude(q => q.Answers)
+                .ToListAsync();
+
+            var model = new TestsListVM
+            {
+                TotalSize = (int)totalSize,
+                PageSize = size,
+                PageCount = pageCount,
+                Page = pageInt,
+                Tests = _mapper.Map<List<TestVM>>(data)
+            };
+
+            return ServiceResponse.GetOkResponse("Tests loaded", model);
         }
     }
 }
